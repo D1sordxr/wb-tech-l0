@@ -14,10 +14,14 @@ type Querier interface {
 	CreateOrder(ctx context.Context, arg CreateOrderParams) error
 	CreatePayment(ctx context.Context, arg CreatePaymentParams) error
 	GetAllOrders(ctx context.Context) ([]Order, error)
+	GetDeliveriesForOrders(ctx context.Context, ids []string) ([]Delivery, error)
 	GetDelivery(ctx context.Context, orderUid string) (Delivery, error)
 	GetItems(ctx context.Context, orderUid string) ([]Item, error)
+	GetItemsForOrders(ctx context.Context, ids []string) ([]Item, error)
+	GetLatestOrders(ctx context.Context, limit int32) ([]Order, error)
 	GetOrder(ctx context.Context, orderUid string) (Order, error)
 	GetPayment(ctx context.Context, orderUid string) (Payment, error)
+	GetPaymentsForOrders(ctx context.Context, ids []string) ([]Payment, error)
 }
 
 var _ Querier = (*Queries)(nil)

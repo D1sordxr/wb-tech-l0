@@ -125,3 +125,21 @@ LIMIT 1;
 -- name: GetItems :many
 SELECT * FROM items
 WHERE order_uid = $1;
+
+-- name: GetLatestOrders :many
+SELECT * FROM orders
+ORDER BY date_created DESC
+LIMIT $1;
+
+-- name: GetItemsForOrders :many
+SELECT * FROM items
+WHERE order_uid = ANY(@ids::text[]);
+
+-- name: GetDeliveriesForOrders :many
+SELECT * FROM deliveries
+WHERE order_uid = ANY(@ids::text[]);
+
+-- name: GetPaymentsForOrders :many
+SELECT * FROM payments
+WHERE order_uid = ANY(@ids::text[]);
+

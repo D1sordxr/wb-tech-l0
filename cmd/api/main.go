@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 	"wb-tech-l0/internal/infrastructure/app"
+	cache "wb-tech-l0/internal/infrastructure/cache/memory/order"
 	"wb-tech-l0/internal/infrastructure/config"
 	"wb-tech-l0/internal/infrastructure/kafka"
 	"wb-tech-l0/internal/infrastructure/storage/postgres"
@@ -27,6 +28,9 @@ func main() {
 	log := slog.Default()
 
 	pool := postgres.NewPool(ctx, &cfg.Storage)
+	orderRepo := orderRepopository.NewOrderRepo(pool)
+
+	orderCache := cache.NewCache(log, orderRepo)
 
 	orderReaderConn := kafka.NewReader(
 		log,
@@ -35,9 +39,11 @@ func main() {
 	)
 	orderWriterConn := kafka.NewWriter(log, &cfg.MessageBroker)
 
-	orderRepo := orderRepopository.NewOrderRepo(pool)
-
-	orderUseCase := order.NewUseCase(log, orderRepo)
+	orderUseCase := order.NewUseCase(
+		log,
+		orderRepo,
+		orderCache,
+	)
 
 	orderHandler := handler.NewHandler(orderUseCase)
 
@@ -65,6 +71,7 @@ func main() {
 	appContainer := app.NewApp(
 		log,
 		pool,
+		orderCache,
 		orderReaderConn,
 		orderWriterConn,
 		httpServer,

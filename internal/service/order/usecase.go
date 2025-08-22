@@ -12,8 +12,21 @@ import (
 )
 
 type UseCase struct {
-	log  appPorts.Logger
-	repo ports.OrderRepo
+	log   appPorts.Logger
+	repo  ports.OrderRepo
+	cache ports.OrderCache
+}
+
+func NewUseCase(
+	log appPorts.Logger,
+	repo ports.OrderRepo,
+	cache ports.OrderCache,
+) *UseCase {
+	return &UseCase{
+		log:   log,
+		repo:  repo,
+		cache: cache,
+	}
 }
 
 func (uc *UseCase) CreateOrder(ctx context.Context, orderDTO dto.Order) error {
@@ -31,19 +44,11 @@ func (uc *UseCase) CreateOrder(ctx context.Context, orderDTO dto.Order) error {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
+	uc.cache.Set(orderModel.OrderUID, orderModel)
+
 	uc.log.Info("Order created successfully", withFields()...)
 
 	return nil
-}
-
-func NewUseCase(
-	log appPorts.Logger,
-	repo ports.OrderRepo,
-) *UseCase {
-	return &UseCase{
-		log:  log,
-		repo: repo,
-	}
 }
 
 func (uc *UseCase) GetByID(
@@ -60,18 +65,23 @@ func (uc *UseCase) GetByID(
 
 	uc.log.Info("Attempting to get order", withFields()...)
 
-	if err := vo.ValidateUID(orderID); err != nil {
+	err := vo.ValidateUID(orderID)
+	if err != nil {
 		uc.log.Error("Failed to validate order", withFields("error", err.Error())...)
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	orderModel, err := uc.repo.GetOrder(ctx, orderID)
+	orderModel := uc.cache.Get(orderID)
+	if orderModel != nil {
+		uc.log.Info("Successfully got order from cache", withFields()...)
+		return orderModel, nil
+	}
+
+	orderModel, err = uc.repo.GetOrder(ctx, orderID)
 	if err != nil {
 		uc.log.Error("Failed to get order", withFields("error", err.Error())...)
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-
-	// parse and return dto
 
 	uc.log.Info("Successfully got order", withFields()...)
 
