@@ -279,6 +279,67 @@ func (q *Queries) GetAllOrders(ctx context.Context) ([]Order, error) {
 	return items, nil
 }
 
+const getDelivery = `-- name: GetDelivery :one
+SELECT order_uid, del_name, phone, zip, city, address, region, email FROM deliveries
+WHERE order_uid = $1
+LIMIT 1
+`
+
+func (q *Queries) GetDelivery(ctx context.Context, orderUid string) (Delivery, error) {
+	row := q.db.QueryRow(ctx, getDelivery, orderUid)
+	var i Delivery
+	err := row.Scan(
+		&i.OrderUid,
+		&i.DelName,
+		&i.Phone,
+		&i.Zip,
+		&i.City,
+		&i.Address,
+		&i.Region,
+		&i.Email,
+	)
+	return i, err
+}
+
+const getItems = `-- name: GetItems :many
+SELECT id, order_uid, chrt_id, track_number, price, rid, item_name, sale, item_size, total_price, nm_id, brand, status FROM items
+WHERE order_uid = $1
+`
+
+func (q *Queries) GetItems(ctx context.Context, orderUid string) ([]Item, error) {
+	rows, err := q.db.Query(ctx, getItems, orderUid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Item
+	for rows.Next() {
+		var i Item
+		if err := rows.Scan(
+			&i.ID,
+			&i.OrderUid,
+			&i.ChrtID,
+			&i.TrackNumber,
+			&i.Price,
+			&i.Rid,
+			&i.ItemName,
+			&i.Sale,
+			&i.ItemSize,
+			&i.TotalPrice,
+			&i.NmID,
+			&i.Brand,
+			&i.Status,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getOrder = `-- name: GetOrder :one
 SELECT order_uid, track_number, entry, locale, internal_signature, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard FROM orders
 WHERE order_uid = $1
@@ -300,6 +361,31 @@ func (q *Queries) GetOrder(ctx context.Context, orderUid string) (Order, error) 
 		&i.SmID,
 		&i.DateCreated,
 		&i.OofShard,
+	)
+	return i, err
+}
+
+const getPayment = `-- name: GetPayment :one
+SELECT order_uid, transaction_id, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee FROM payments
+WHERE order_uid = $1
+LIMIT 1
+`
+
+func (q *Queries) GetPayment(ctx context.Context, orderUid string) (Payment, error) {
+	row := q.db.QueryRow(ctx, getPayment, orderUid)
+	var i Payment
+	err := row.Scan(
+		&i.OrderUid,
+		&i.TransactionID,
+		&i.RequestID,
+		&i.Currency,
+		&i.Provider,
+		&i.Amount,
+		&i.PaymentDt,
+		&i.Bank,
+		&i.DeliveryCost,
+		&i.GoodsTotal,
+		&i.CustomFee,
 	)
 	return i, err
 }

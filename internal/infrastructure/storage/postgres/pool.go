@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
 	"time"
-	"wb-tech-l0/internal/config"
+	"wb-tech-l0/internal/infrastructure/config"
 )
 
 type Pool struct {

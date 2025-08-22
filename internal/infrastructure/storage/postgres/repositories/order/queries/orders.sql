@@ -111,3 +111,17 @@ LIMIT 1;
 
 -- name: GetAllOrders :many
 SELECT * FROM orders;
+
+-- name: GetDelivery :one
+SELECT * FROM deliveries
+WHERE order_uid = $1
+LIMIT 1;
+
+-- name: GetPayment :one
+SELECT * FROM payments
+WHERE order_uid = $1
+LIMIT 1;
+
+-- name: GetItems :many
+SELECT * FROM items
+WHERE order_uid = $1;

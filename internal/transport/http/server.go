@@ -5,8 +5,8 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"wb-tech-l0/internal/config"
 	"wb-tech-l0/internal/domain/app/ports"
+	"wb-tech-l0/internal/infrastructure/config"
 )
 
 type Handler interface {
@@ -52,7 +52,7 @@ func (s *Server) Run(_ context.Context) error {
 	s.log.Info("Starting HTTP server...", "address", s.server.Addr)
 	if err := s.server.ListenAndServe(); err != nil {
 		if errors.Is(err, http.ErrServerClosed) {
-			s.log.Info("WS server closed gracefully")
+			s.log.Info("HTTP server closed gracefully")
 			return nil
 		}
 		s.log.Error("HTTP server stopped with error", "error", err.Error())
@@ -66,7 +66,7 @@ func (s *Server) Run(_ context.Context) error {
 func (s *Server) Shutdown(ctx context.Context) error {
 	s.log.Info("Shutting down HTTP server...")
 	if err := s.server.Shutdown(ctx); err != nil {
-		s.log.Error("Failed to gracefully shutdown WS server", "error", err.Error())
+		s.log.Error("Failed to gracefully shutdown HTTP server", "error", err.Error())
 		return err
 	}
 	s.log.Info("HTTP server shutdown complete")

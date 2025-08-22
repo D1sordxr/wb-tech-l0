@@ -45,9 +45,12 @@ func (h *Handler) getByID(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, resp)
+	ctx.JSON(http.StatusOK, &resp)
 }
 
 func (h *Handler) RegisterRoutes(router gin.IRouter) {
 	router.GET("/order/:id", h.getByID)
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "ok"})
+	})
 }

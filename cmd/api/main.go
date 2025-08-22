@@ -5,15 +5,17 @@ import (
 	"log/slog"
 	"os/signal"
 	"syscall"
-	"wb-tech-l0/internal/app"
-	"wb-tech-l0/internal/config"
+	"wb-tech-l0/internal/infrastructure/app"
+	"wb-tech-l0/internal/infrastructure/config"
+	"wb-tech-l0/internal/infrastructure/kafka"
+	"wb-tech-l0/internal/infrastructure/storage/postgres"
+	orderRepopository "wb-tech-l0/internal/infrastructure/storage/postgres/repositories/order"
+	loadWorker "wb-tech-l0/internal/infrastructure/worker"
+	"wb-tech-l0/internal/infrastructure/worker/job"
 	"wb-tech-l0/internal/service/order"
-	"wb-tech-l0/internal/storage/postgres"
-	orderRepopository "wb-tech-l0/internal/storage/postgres/repositories/order"
 	"wb-tech-l0/internal/transport/http"
 	"wb-tech-l0/internal/transport/http/order/handler"
-	"wb-tech-l0/internal/transport/kafka"
-	"wb-tech-l0/internal/transport/kafka/reader"
+	"wb-tech-l0/internal/transport/kafka/order/reader"
 )
 
 func main() {
@@ -26,11 +28,18 @@ func main() {
 
 	pool := postgres.NewPool(ctx, &cfg.Storage)
 
+	orderReaderConn := kafka.NewReader(
+		log,
+		&cfg.MessageBroker,
+		cfg.MessageBroker.SaverGroup,
+	)
+	orderWriterConn := kafka.NewWriter(log, &cfg.MessageBroker)
+
 	orderRepo := orderRepopository.NewOrderRepo(pool)
 
-	orderUseCase := order.NewUseCase(log, orderRepo) // todo
+	orderUseCase := order.NewUseCase(log, orderRepo)
 
-	orderHandler := handler.NewHandler(orderUseCase) // todo
+	orderHandler := handler.NewHandler(orderUseCase)
 
 	httpServer := http.NewServer(
 		log,
@@ -38,18 +47,28 @@ func main() {
 		orderHandler,
 	)
 
-	orderReader := reader.NewReader() // todo
-
-	kafkaWorker := kafka.NewWorker( // todo
+	orderKafkaReader := reader.NewReader(
 		log,
-		orderReader,
+		orderReaderConn,
+		orderUseCase,
+		cfg.MessageBroker.OrdersTopic,
+	)
+
+	orderKafkaWriter := job.NewMockOrderWriter(log, orderWriterConn)
+
+	worker := loadWorker.NewWorker(
+		log,
+		orderKafkaReader,
+		orderKafkaWriter,
 	)
 
 	appContainer := app.NewApp(
 		log,
 		pool,
+		orderReaderConn,
+		orderWriterConn,
 		httpServer,
-		kafkaWorker,
+		worker,
 	)
 	appContainer.Run(ctx)
 }

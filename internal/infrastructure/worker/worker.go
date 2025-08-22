@@ -1,4 +1,4 @@
-package kafka
+package worker
 
 import (
 	"context"
@@ -8,19 +8,19 @@ import (
 	"wb-tech-l0/internal/domain/app/ports"
 )
 
-type Reader interface {
+type Handlers interface {
 	Start(ctx context.Context) error
 	Stop(ctx context.Context) error
 }
 
 type Worker struct {
 	log      ports.Logger
-	handlers []Reader
+	handlers []Handlers
 }
 
 func NewWorker(
 	log ports.Logger,
-	handlers ...Reader,
+	handlers ...Handlers,
 ) *Worker {
 	return &Worker{
 		log:      log,
@@ -29,7 +29,7 @@ func NewWorker(
 }
 
 func (w *Worker) Run(ctx context.Context) error {
-	w.log.Info("starting kafka reader worker", "total_readers", len(w.handlers))
+	w.log.Info("starting worker", "total_handlers", len(w.handlers))
 
 	errChan := make(chan error, 1)
 	errGroup, ctx := errgroup.WithContext(ctx)
@@ -38,7 +38,7 @@ func (w *Worker) Run(ctx context.Context) error {
 	}()
 
 	for idx, handler := range w.handlers {
-		func(idx int, handler Reader) {
+		func(idx int, handler Handlers) {
 			errGroup.Go(func() error {
 				return handler.Start(ctx)
 			})
@@ -47,8 +47,8 @@ func (w *Worker) Run(ctx context.Context) error {
 
 	select {
 	case err := <-errChan:
-		w.log.Error("kafka reader received critical error, initiating shutdown", "error", err.Error())
-		return fmt.Errorf("reader error: %w", err)
+		w.log.Error("worker received critical error, initiating shutdown", "error", err.Error())
+		return fmt.Errorf("worker error: %w", err)
 	case <-ctx.Done():
 		return nil
 	}
@@ -63,14 +63,14 @@ func (w *Worker) Shutdown(ctx context.Context) error {
 		defer close(done)
 		for i := len(w.handlers) - 1; i >= 0; i-- {
 			if err := w.handlers[i].Stop(ctx); err != nil {
-				w.log.Error("kafka reader stopped with error", "error", err.Error())
+				w.log.Error("worker stopped with error", "error", err.Error())
 			}
 		}
 	}()
 
 	select {
 	case <-done:
-		w.log.Info("all readers stopped")
+		w.log.Info("all handlers stopped")
 		return nil
 	case <-ctx.Done():
 		w.log.Warn("forced shutdown due to context timeout")
