@@ -50,10 +50,6 @@ func (h *Handler) getByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, &resp)
 }
 
-func handleWS(ctx *gin.Context) {
-
-}
-
 func (h *Handler) RegisterRoutes(router gin.IRouter) {
 	router.GET("/order/:id", h.getByID)
 	router.GET("/health", func(c *gin.Context) {

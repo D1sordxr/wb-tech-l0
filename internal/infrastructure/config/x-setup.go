@@ -9,7 +9,7 @@ import (
 const basicConfigPath = "./configs/api/prod.yaml"
 
 type Config struct {
-	Server        HttpServer `yaml:"server"`
+	Server        HTTPServer `yaml:"server"`
 	MessageBroker Kafka      `yaml:"message_broker"`
 	Storage       Postgres   `yaml:"storage"`
 }

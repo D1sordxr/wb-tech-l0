@@ -24,7 +24,7 @@ type Server struct {
 
 func NewServer(
 	log ports.Logger,
-	config *config.HttpServer,
+	config *config.HTTPServer,
 	handlers ...Handler,
 ) *Server {
 	log.Info("Initializing HTTP server", "port", config.Port)

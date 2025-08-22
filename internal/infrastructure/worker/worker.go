@@ -39,12 +39,12 @@ func (w *Worker) Run(ctx context.Context) error {
 		errChan <- errGroup.Wait()
 	}()
 
-	for idx, handler := range w.handlers {
-		func(idx int, handler Handlers) {
+	for _, handler := range w.handlers {
+		func(handler Handlers) {
 			errGroup.Go(func() error {
 				return handler.Start(ctx)
 			})
-		}(idx, handler)
+		}(handler)
 	}
 
 	select {
