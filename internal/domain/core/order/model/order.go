@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Order struct {
-	ID                string
+	OrderUID          string
 	TrackNumber       string
 	Entry             string
 	Delivery          Delivery

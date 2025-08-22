@@ -5,6 +5,6 @@ import (
 	"wb-tech-l0/internal/storage/postgres/repositories/order/gen"
 )
 
-type UseCase interface {
-	GetByID(ctx context.Context, orderID string) (*gen.Order, error)
+type OrderRepo interface {
+	GetOrder(ctx context.Context, orderID string) (*gen.Order, error)
 }

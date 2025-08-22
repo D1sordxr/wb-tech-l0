@@ -5,7 +5,7 @@ import (
 	"errors"
 	"golang.org/x/sync/errgroup"
 	"time"
-	"wb-tech-l0/internal/domain/ports"
+	"wb-tech-l0/internal/domain/app/ports"
 )
 
 type component interface {

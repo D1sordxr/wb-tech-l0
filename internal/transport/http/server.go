@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"wb-tech-l0/internal/config"
-	"wb-tech-l0/internal/domain/ports"
+	"wb-tech-l0/internal/domain/app/ports"
 )
 
 type Handler interface {
