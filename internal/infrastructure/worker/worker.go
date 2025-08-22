@@ -3,9 +3,11 @@ package worker
 import (
 	"context"
 	"fmt"
-	"golang.org/x/sync/errgroup"
 	"time"
-	"wb-tech-l0/internal/domain/app/ports"
+
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/app/ports"
+
+	"golang.org/x/sync/errgroup"
 )
 
 type Handlers interface {

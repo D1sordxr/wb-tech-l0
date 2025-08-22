@@ -1,8 +1,8 @@
 package mapper
 
 import (
-	"wb-tech-l0/internal/domain/core/order/model"
-	"wb-tech-l0/internal/transport/kafka/order/dto"
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/core/order/model"
+	"github.com/D1sordxr/wb-tech-l0/internal/transport/kafka/order/dto"
 )
 
 func OrderFromDTO(dtoOrder dto.Order) *model.Order {

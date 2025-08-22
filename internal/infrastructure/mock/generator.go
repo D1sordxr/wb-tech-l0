@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"math/big"
 	"time"
-	"wb-tech-l0/internal/transport/kafka/order/dto"
+
+	"github.com/D1sordxr/wb-tech-l0/internal/transport/kafka/order/dto"
 )
 
 type Generator struct{}

@@ -2,12 +2,14 @@ package handler
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
-	"wb-tech-l0/internal/domain/core/order/ports"
-	sharedErrs "wb-tech-l0/internal/domain/core/shared/errors"
-	"wb-tech-l0/pkg/errtool"
+
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/core/order/ports"
+	sharedErrs "github.com/D1sordxr/wb-tech-l0/internal/domain/core/shared/errors"
+	"github.com/D1sordxr/wb-tech-l0/pkg/errtool"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
@@ -49,7 +51,7 @@ func (h *Handler) getByID(ctx *gin.Context) {
 }
 
 func handleWS(ctx *gin.Context) {
-	
+
 }
 
 func (h *Handler) RegisterRoutes(router gin.IRouter) {

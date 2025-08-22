@@ -2,7 +2,8 @@ package ports
 
 import (
 	"context"
-	"wb-tech-l0/internal/domain/core/order/model"
+
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/core/order/model"
 )
 
 type OrderRepo interface {

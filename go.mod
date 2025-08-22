@@ -1,4 +1,4 @@
-module wb-tech-l0
+module github.com/D1sordxr/wb-tech-l0
 
 go 1.24
 

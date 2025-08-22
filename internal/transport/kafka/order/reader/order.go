@@ -3,12 +3,14 @@ package reader
 import (
 	"context"
 	"encoding/json"
-	"github.com/go-playground/validator/v10"
 	"time"
-	appPorts "wb-tech-l0/internal/domain/app/ports"
-	"wb-tech-l0/internal/domain/core/order/ports"
-	"wb-tech-l0/internal/infrastructure/kafka"
-	"wb-tech-l0/internal/transport/kafka/order/dto"
+
+	appPorts "github.com/D1sordxr/wb-tech-l0/internal/domain/app/ports"
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/core/order/ports"
+	"github.com/D1sordxr/wb-tech-l0/internal/infrastructure/kafka"
+	"github.com/D1sordxr/wb-tech-l0/internal/transport/kafka/order/dto"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type Reader struct {

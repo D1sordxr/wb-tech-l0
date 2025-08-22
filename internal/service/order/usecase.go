@@ -3,12 +3,13 @@ package order
 import (
 	"context"
 	"fmt"
-	appPorts "wb-tech-l0/internal/domain/app/ports"
-	"wb-tech-l0/internal/domain/core/order/model"
-	"wb-tech-l0/internal/domain/core/order/ports"
-	"wb-tech-l0/internal/domain/core/shared/vo"
-	"wb-tech-l0/internal/service/mapper"
-	"wb-tech-l0/internal/transport/kafka/order/dto"
+
+	appPorts "github.com/D1sordxr/wb-tech-l0/internal/domain/app/ports"
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/core/order/model"
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/core/order/ports"
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/core/shared/vo"
+	"github.com/D1sordxr/wb-tech-l0/internal/service/mapper"
+	"github.com/D1sordxr/wb-tech-l0/internal/transport/kafka/order/dto"
 )
 
 type UseCase struct {

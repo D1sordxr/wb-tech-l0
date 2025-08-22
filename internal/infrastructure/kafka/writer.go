@@ -3,10 +3,12 @@ package kafka
 import (
 	"context"
 	"fmt"
-	"github.com/segmentio/kafka-go"
 	"time"
-	"wb-tech-l0/internal/domain/app/ports"
-	"wb-tech-l0/internal/infrastructure/config"
+
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/app/ports"
+	"github.com/D1sordxr/wb-tech-l0/internal/infrastructure/config"
+
+	"github.com/segmentio/kafka-go"
 )
 
 type Writer struct {

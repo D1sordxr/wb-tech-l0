@@ -4,11 +4,13 @@ import (
 	"context"
 	"embed"
 	"fmt"
+	"time"
+
+	"github.com/D1sordxr/wb-tech-l0/internal/infrastructure/config"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
-	"time"
-	"wb-tech-l0/internal/infrastructure/config"
 )
 
 type Pool struct {

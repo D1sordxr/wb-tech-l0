@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
+	orderErrs "github.com/D1sordxr/wb-tech-l0/internal/domain/core/order/errors"
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/core/order/model"
+	"github.com/D1sordxr/wb-tech-l0/internal/infrastructure/storage/postgres"
+	"github.com/D1sordxr/wb-tech-l0/internal/infrastructure/storage/postgres/repositories/order/gen"
+	"github.com/D1sordxr/wb-tech-l0/internal/infrastructure/storage/postgres/tools"
+
 	"github.com/jackc/pgx/v5"
-	orderErrs "wb-tech-l0/internal/domain/core/order/errors"
-	"wb-tech-l0/internal/domain/core/order/model"
-	"wb-tech-l0/internal/infrastructure/storage/postgres"
-	"wb-tech-l0/internal/infrastructure/storage/postgres/repositories/order/gen"
-	"wb-tech-l0/internal/infrastructure/storage/postgres/tools"
 )
 
 type Repository struct {

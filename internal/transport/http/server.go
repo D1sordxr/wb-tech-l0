@@ -3,10 +3,12 @@ package http
 import (
 	"context"
 	"errors"
-	"github.com/gin-gonic/gin"
 	"net/http"
-	"wb-tech-l0/internal/domain/app/ports"
-	"wb-tech-l0/internal/infrastructure/config"
+
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/app/ports"
+	"github.com/D1sordxr/wb-tech-l0/internal/infrastructure/config"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Handler interface {

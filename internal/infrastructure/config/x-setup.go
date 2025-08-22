@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/ilyakaznacheev/cleanenv"
 	"os"
+
+	"github.com/ilyakaznacheev/cleanenv"
 )
 
 const basicConfigPath = "./configs/api/prod.yaml"

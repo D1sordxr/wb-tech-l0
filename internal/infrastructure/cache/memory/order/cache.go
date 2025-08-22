@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"sync"
 	"time"
-	appPorts "wb-tech-l0/internal/domain/app/ports"
-	"wb-tech-l0/internal/domain/core/order/model"
-	"wb-tech-l0/internal/domain/core/order/ports"
+
+	appPorts "github.com/D1sordxr/wb-tech-l0/internal/domain/app/ports"
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/core/order/model"
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/core/order/ports"
 )
 
 type Cache struct {

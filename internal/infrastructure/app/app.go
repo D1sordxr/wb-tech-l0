@@ -3,24 +3,27 @@ package app
 import (
 	"context"
 	"errors"
-	"golang.org/x/sync/errgroup"
+	"fmt"
 	"time"
-	"wb-tech-l0/internal/domain/app/ports"
+
+	"github.com/D1sordxr/wb-tech-l0/internal/domain/app/ports"
+
+	"golang.org/x/sync/errgroup"
 )
 
-type component interface {
+type appComponent interface {
 	Run(ctx context.Context) error
 	Shutdown(ctx context.Context) error
 }
 
 type App struct {
 	log        ports.Logger
-	components []component
+	components []appComponent
 }
 
 func NewApp(
 	log ports.Logger,
-	components ...component,
+	components ...appComponent,
 ) *App {
 	return &App{
 		log:        log,
@@ -35,12 +38,19 @@ func (a *App) Run(ctx context.Context) {
 	errGroup, ctx := errgroup.WithContext(ctx)
 	go func() { errChan <- errGroup.Wait() }()
 
-	for _, c := range a.components {
-		func(c component) {
-			errGroup.Go(func() error {
-				return c.Run(ctx)
-			})
-		}(c)
+	for i, c := range a.components {
+		component := c
+		idx := i
+		errGroup.Go(func() error {
+			a.log.Info("Starting appComponent", "idx", idx, "type", fmt.Sprintf("%T", component))
+			err := component.Run(ctx)
+			if err != nil {
+				a.log.Error("Component failed", "idx", idx, "type", fmt.Sprintf("%T", component), "error", err)
+			} else {
+				a.log.Info("Component stopped", "idx", idx, "type", fmt.Sprintf("%T", component))
+			}
+			return err
+		})
 	}
 
 	select {
@@ -59,7 +69,7 @@ func (a *App) shutdown() {
 
 	errs := make([]error, 0, len(a.components))
 	for i := len(a.components) - 1; i >= 0; i-- {
-		a.log.Info("Shutting down component", "idx", i)
+		a.log.Info("Shutting down appComponent", "idx", i)
 		if err := a.components[i].Shutdown(shutdownCtx); err != nil {
 			errs = append(errs, err)
 		}

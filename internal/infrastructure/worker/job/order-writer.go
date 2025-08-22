@@ -3,11 +3,13 @@ package job
 import (
 	"context"
 	"encoding/json"
-	kafkaLib "github.com/segmentio/kafka-go"
 	"time"
-	appPorts "wb-tech-l0/internal/domain/app/ports"
-	"wb-tech-l0/internal/infrastructure/kafka"
-	"wb-tech-l0/internal/infrastructure/mock"
+
+	appPorts "github.com/D1sordxr/wb-tech-l0/internal/domain/app/ports"
+	"github.com/D1sordxr/wb-tech-l0/internal/infrastructure/kafka"
+	"github.com/D1sordxr/wb-tech-l0/internal/infrastructure/mock"
+
+	kafkaLib "github.com/segmentio/kafka-go"
 )
 
 type MockOrderWriter struct {

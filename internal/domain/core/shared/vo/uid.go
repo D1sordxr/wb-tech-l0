@@ -4,7 +4,8 @@ import (
 	"crypto/rand"
 	"fmt"
 	"math/big"
-	sharedErrs "wb-tech-l0/internal/domain/core/shared/errors"
+
+	sharedErrs "github.com/D1sordxr/wb-tech-l0/internal/domain/core/shared/errors"
 )
 
 const (
