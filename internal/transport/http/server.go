@@ -3,12 +3,12 @@ package http
 import (
 	"context"
 	"errors"
-	"net/http"
-
 	"github.com/D1sordxr/wb-tech-l0/internal/domain/app/ports"
 	"github.com/D1sordxr/wb-tech-l0/internal/infrastructure/config"
-
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"time"
 )
 
 type Handler interface {
@@ -31,6 +31,22 @@ func NewServer(
 
 	engine := gin.Default()
 
+	if config.CORS {
+		allowedOrigins := config.AllowOrigins
+		if len(allowedOrigins) == 0 {
+			allowedOrigins = []string{"*"}
+		}
+
+		engine.Use(cors.New(cors.Config{
+			AllowOrigins:     allowedOrigins,
+			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+			AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           12 * time.Hour,
+		}))
+	}
+
 	return &Server{
 		log: log,
 		server: &http.Server{
@@ -48,7 +64,8 @@ func NewServer(
 func (s *Server) Run(_ context.Context) error {
 	s.log.Info("Registering HTTP handlers...")
 	for _, handler := range s.handlers {
-		handler.RegisterRoutes(s.engine)
+		group := s.engine.Group("/api")
+		handler.RegisterRoutes(group)
 	}
 
 	s.log.Info("Starting HTTP server...", "address", s.server.Addr)

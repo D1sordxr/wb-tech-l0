@@ -12,6 +12,13 @@ server:
   port: "8080"
   timeout: "30s"
   idle_timeout: "120s"
+  cors: true
+  allow_origins:
+    - "http://localhost:80"
+    - "http://localhost:88"
+    - "http://ui:80"
+    - "http://ui:88"
+
 
 message_broker:
   address: "kafka:9093"
