@@ -113,21 +113,20 @@ func (c *Cache) Run(ctx context.Context) error {
 		"orders_count", len(orders),
 	)
 
-	if len(orders) == 0 {
+	if len(orders) > 0 {
+		lastUID := orders[len(orders)-1].OrderUID
+
+		c.log.Info("Cache initialization",
+			"operation", op,
+			"orders_count", len(orders),
+			"last_uid", lastUID,
+		)
+
+		for _, order := range orders {
+			c.Set(order.OrderUID, order)
+		}
+	} else {
 		c.log.Warn("No orders found for cache initialization")
-		return nil
-	}
-
-	lastUID := orders[len(orders)-1].OrderUID
-
-	c.log.Info("Cache initialization",
-		"operation", op,
-		"orders_count", len(orders),
-		"last_uid", lastUID,
-	)
-
-	for _, order := range orders {
-		c.Set(order.OrderUID, order)
 	}
 
 	cleanupTicker := time.NewTicker(c.ttl / 2)
