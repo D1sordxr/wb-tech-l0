@@ -59,7 +59,7 @@ func (p *Pool) Run(ctx context.Context) error {
 		}
 	}
 
-	ticker := time.NewTicker(15 * time.Second)
+	ticker := time.NewTicker(30 * time.Second)
 	defer ticker.Stop()
 
 	for {
@@ -67,7 +67,9 @@ func (p *Pool) Run(ctx context.Context) error {
 		case <-ctx.Done():
 			return nil
 		case <-ticker.C:
-			return p.Pool.Ping(ctx)
+			if err := p.Pool.Ping(ctx); err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
 		}
 	}
 }
