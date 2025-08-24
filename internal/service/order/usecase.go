@@ -84,6 +84,8 @@ func (uc *UseCase) GetByID(
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
+	uc.cache.Set(orderModel.OrderUID, orderModel)
+
 	uc.log.Info("Successfully got order", withFields()...)
 
 	return orderModel, nil
